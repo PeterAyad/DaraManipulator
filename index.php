@@ -67,7 +67,7 @@ $result = $stmt->get_result();
             </div>
         </div>
         <div class="container-fluid">
-            <h1 class="mt-4">Title</h1>
+            <h1 class="mt-4">Employees</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item active">Info.</li>
             </ol>
@@ -100,16 +100,24 @@ $result = $stmt->get_result();
                                 </tr>
                             </tfoot>
                             <tbody>
-                                <?php while ($row = $result->fetch_assoc()) { ?>
+                                <?php $index=1; while ($row = $result->fetch_assoc()) { ?>
                                     <tr>
                                         <td><?php echo $row['name']; ?></td>
                                         <td><?php echo $row['position']; ?></td>
                                         <td><?php echo $row['office']; ?></td>
                                         <td><?php echo $row['age']; ?></td>
                                         <td><?php echo $row['start_date']; ?></td>
-                                        <td style="text-align: center;"><button data-id="<?php echo $row['id']; ?>" class=" edit btn btn-primary" data-toggle="modal" data-target="#Modal">Edit Name</button></td>
+                                        <td style="text-align: center;"><button data-id="<?php echo $row['id']; ?>" data-index="<?php echo $index; ?>"class=" edit btn btn-primary" data-toggle="modal" data-target="#Modal">Edit Name</button><button data-id="<?php echo $row['id']; ?>" class="ml-3 delete btn btn-danger">Delete</button></td>
                                     </tr>
-                                <?php } ?>
+                                <?php $index = $index+ 1;} ?>
+                                <tr>
+                                    <th><input type="text" class="form-control" id="NewName" placeholder="Name"></th>
+                                    <th><input type="text" class="form-control" id="NewPosition" placeholder="Position"></th>
+                                    <th><input type="text" class="form-control" id="NewOffice" placeholder="Office"></th>
+                                    <th><input style="width: 70px;" type="text" class="form-control" id="NewAge" placeholder="Age"></th>
+                                    <th><input style="width: 130px;" type="text" class="form-control" id="NewStartdate" placeholder="Start date"></th>
+                                    <th style="text-align: center;"><button data-id="<?php echo $row['id']; ?>" class="w-100 add btn btn-success ">Add</button></th>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -125,11 +133,13 @@ $result = $stmt->get_result();
     <script>
         var current_id = null;
         var current_cell = null;
+        var current_index = null;
         $('#Modal').on('shown.bs.modal', function() {
             $('#edit').trigger('focus')
         })
         $(".edit").click(function() {
             current_id = $(this).attr("data-id");
+            current_index = $(this).attr("data-index");
             current_cell = ['name', 0];
             $.ajax({
                 url: "edit_request.php",
@@ -178,7 +188,49 @@ $result = $stmt->get_result();
                 success: function(data) {
                     var myTable = document.getElementById('dataTable');
                     console.log(myTable);
-                    myTable.rows[current_id].cells[current_cell[1]].innerHTML = data;
+                    myTable.rows[current_index].cells[current_cell[1]].innerHTML = data;
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                },
+            });
+        });
+        $(".delete").click(function() {
+            var id = $(this).attr("data-id");
+            $.ajax({
+                url: "edit_request.php",
+                type: "POST",
+                data: {
+                    delete: 1,
+                    id: id,
+                },
+                success: function(data) {
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                },
+            });
+        });
+        $(".add").click(function() {
+            var Name = $('#NewName').val();
+            var Position = $('#NewPosition').val();
+            var Office = $('#NewOffice').val();
+            var Age = $('#NewAge').val();
+            var Startdate = $('#NewStartdate').val();
+            $.ajax({
+                url: "edit_request.php",
+                type: "POST",
+                data: {
+                    add: 1,
+                    Name: Name,
+                    Position: Position,
+                    Office: Office,
+                    Age: Age,
+                    Startdate: Startdate,
+                },
+                success: function(data) {
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
