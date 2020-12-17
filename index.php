@@ -45,6 +45,15 @@ $result = $stmt->get_result();
                     <div class="modal-body">
                         <form>
                             <div class="form-group">
+                                <select id="SelectColumn" class="form-control">
+                                    <option value="name 0" selected>Name</option>
+                                    <option value="position 1">Position</option>
+                                    <option value="office 2">Office</option>
+                                    <option value="age 3">Age</option>
+                                    <option value="start_date 4">Start date</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="message-text" class="col-form-label">Name:</label>
                                 <textarea class="form-control" id="message-text"></textarea>
                             </div>
@@ -115,17 +124,38 @@ $result = $stmt->get_result();
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script>
         var current_id = null;
+        var current_cell = null;
         $('#Modal').on('shown.bs.modal', function() {
             $('#edit').trigger('focus')
         })
         $(".edit").click(function() {
             current_id = $(this).attr("data-id");
+            current_cell = ['name', 0];
             $.ajax({
                 url: "edit_request.php",
                 type: "POST",
                 data: {
                     get: 1,
-                    id: current_id
+                    id: current_id,
+                    column: current_cell[0]
+                },
+                success: function(data) {
+                    $('#message-text').val(data);
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                },
+            });
+        });
+        $("#SelectColumn").change(function() {
+            current_cell = $("#SelectColumn").val().split(" ");
+            $.ajax({
+                url: "edit_request.php",
+                type: "POST",
+                data: {
+                    get: 1,
+                    id: current_id,
+                    column: current_cell[0]
                 },
                 success: function(data) {
                     $('#message-text').val(data);
@@ -141,13 +171,14 @@ $result = $stmt->get_result();
                 type: "POST",
                 data: {
                     set: 1,
-                    name: $('#message-text').val(),
-                    id: current_id
+                    id: current_id,
+                    column: current_cell[0],
+                    data: $('#message-text').val()
                 },
                 success: function(data) {
                     var myTable = document.getElementById('dataTable');
                     console.log(myTable);
-                    myTable.rows[current_id].cells[0].innerHTML = data;
+                    myTable.rows[current_id].cells[current_cell[1]].innerHTML = data;
                 },
                 error: function(xhr, status, error) {
                     console.log(error);

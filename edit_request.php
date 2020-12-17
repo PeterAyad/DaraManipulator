@@ -12,14 +12,16 @@ if (mysqli_connect_errno($mysqli))
 
 if (isset($_POST['get'])) {
     $id = $_POST['id'];
-    $result = $mysqli->query("SELECT `name` FROM `employees` WHERE `id` = $id");
+    $column = $_POST['column'];
+    $result = $mysqli->query("SELECT $column FROM `employees` WHERE `id` = $id");
     $data = $result->fetch_assoc();
-    echo $data['name'];
+    echo $data[$column];
 }
 
 if (isset($_POST['set'])) {
-    $name = $_POST['name'];
+    $column = $_POST['column'];
+    $data = $_POST['data'];
     $id = $_POST['id'];
-    $mysqli->query("UPDATE `employees` SET `name`= '$name' WHERE `id` = $id");
-    echo $name;
+    $mysqli->query("UPDATE `employees` SET $column = '$data' WHERE `id` = $id");
+    echo $data;
 }
