@@ -107,7 +107,7 @@ $result = $stmt->get_result();
                                         <td><?php echo $row['office']; ?></td>
                                         <td><?php echo $row['age']; ?></td>
                                         <td><?php echo $row['start_date']; ?></td>
-                                        <td style="text-align: center;"><button data-id="<?php echo $row['id']; ?>" data-index="<?php echo $index; ?>"class=" edit btn btn-primary" data-toggle="modal" data-target="#Modal">Edit Name</button><button data-id="<?php echo $row['id']; ?>" class="ml-3 delete btn btn-danger">Delete</button></td>
+                                        <td style="text-align: center;"><button data-id="<?php echo $row['id']; ?>" data-index="<?php echo $index; ?>"class=" edit btn btn-primary" data-toggle="modal" data-target="#Modal">Edit</button><button data-id="<?php echo $row['id']; ?>" class="ml-3 delete btn btn-danger">Delete</button></td>
                                     </tr>
                                 <?php $index = $index+ 1;} ?>
                                 <tr>
